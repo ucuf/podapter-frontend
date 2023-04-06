@@ -12,6 +12,9 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import axios from "axios";
+import { useLocalStorageState } from "../hooks/useLocalStorageState";
+import { useAuth } from "../hooks/useAuth";
 
 function Copyright(props: any) {
   return (
@@ -33,16 +36,29 @@ function Copyright(props: any) {
 
 const theme = createTheme();
 
-export default function SignIn() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+type FormData = {
+  username: string;
+  password: string;
+};
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+export default function SignIn() {
+  const [formData, setformData] = useState<FormData>({
+    username: "",
+    password: "",
+  });
+  const { login } = useAuth();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log({
-      username,
-      password,
-    });
+    console.log({ formData });
+    login(formData);
+  };
+
+  const handleChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    const { name, value } = event.currentTarget;
+    setformData({ ...formData, [name]: value });
   };
 
   return (
@@ -70,8 +86,8 @@ export default function SignIn() {
             sx={{ mt: 1 }}
           >
             <TextField
-              value={username}
-              onChange={({ currentTarget: { value } }) => setUsername(value)}
+              value={formData.username}
+              onChange={handleChange}
               margin="normal"
               required
               fullWidth
@@ -82,8 +98,8 @@ export default function SignIn() {
               autoFocus
             />
             <TextField
-              value={password}
-              onChange={({ currentTarget: { value } }) => setPassword(value)}
+              value={formData.password}
+              onChange={handleChange}
               margin="normal"
               required
               fullWidth
