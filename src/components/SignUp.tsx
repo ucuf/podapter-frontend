@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -12,9 +13,9 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import axios from "axios";
 import { useLocalStorageState } from "../hooks/useLocalStorageState";
-import { useAuth } from "../hooks/useAuth";
+import useAuth from "../hooks/useAuth";
+import axios from "../api/axios";
 
 interface FormData {
   firstname: string;
@@ -45,27 +46,49 @@ function Copyright(props: any) {
 const theme = createTheme();
 
 export default function SignUp() {
-  const [formData, setformData] = useState<FormData>({
-    firstname: "",
-    lastname: "",
-    email: "",
-    username: "",
-    password: "",
-  });
-  const { register } = useAuth();
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { setAuth } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    console.dir({ formData });
-    register(formData);
-  };
-
-  const handleChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => {
-    const { name, value } = event.currentTarget;
-    setformData({ ...formData, [name]: value });
+    console.dir({
+      firstname,
+      lastname,
+      email,
+      username,
+      password,
+    });
+    try {
+      const response = await axios.post(
+        "/api/v1/auth/register",
+        {
+          firstname,
+          lastname,
+          email,
+          username,
+          password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const authResponse = response.data;
+      setAuth({
+        accessToken: authResponse?.authToken,
+        username,
+        password,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -95,8 +118,8 @@ export default function SignUp() {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  value={formData.firstname}
-                  onChange={handleChange}
+                  value={firstname}
+                  onChange={(e) => setFirstname(e.target.value)}
                   autoComplete="given-name"
                   name="firstname"
                   required
@@ -108,8 +131,8 @@ export default function SignUp() {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  value={formData.lastname}
-                  onChange={handleChange}
+                  value={lastname}
+                  onChange={(e) => setLastname(e.target.value)}
                   required
                   fullWidth
                   id="lastname"
@@ -120,8 +143,8 @@ export default function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  value={formData.username}
-                  onChange={handleChange}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                   fullWidth
                   id="username"
@@ -132,8 +155,8 @@ export default function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  value={formData.email}
-                  onChange={handleChange}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   fullWidth
                   id="email"
@@ -144,8 +167,8 @@ export default function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  value={formData.password}
-                  onChange={handleChange}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                   fullWidth
                   name="password"

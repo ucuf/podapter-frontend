@@ -1,4 +1,9 @@
+import * as React from "react";
 import { useState } from "react";
+import useAuth from "../hooks/useAuth";
+import axios from "../api/axios";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,9 +17,8 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import axios from "axios";
+import GuestLayout from "./layout/GuestLayout";
 import { useLocalStorageState } from "../hooks/useLocalStorageState";
-import { useAuth } from "../hooks/useAuth";
 
 function Copyright(props: any) {
   return (
@@ -34,109 +38,140 @@ function Copyright(props: any) {
   );
 }
 
-const theme = createTheme();
-
-type FormData = {
-  username: string;
-  password: string;
+type AuthResponse = {
+  authToken: string;
+  refreshToken: string;
 };
 
+const theme = createTheme();
 export default function SignIn() {
-  const [formData, setformData] = useState<FormData>({
-    username: "",
-    password: "",
-  });
-  const { login } = useAuth();
+  const { setAuth } = useAuth();
+  const [, setRefreshToken] = useLocalStorageState("refreshToken");
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/profile";
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log({ formData });
-    login(formData);
-  };
-
-  const handleChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => {
-    const { name, value } = event.currentTarget;
-    setformData({ ...formData, [name]: value });
+    console.log({ username, password });
+    try {
+      const response = await axios.post(
+        "/api/v1/auth/authenticate",
+        JSON.stringify({
+          username,
+          password,
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      const authResponse: AuthResponse = response?.data;
+      const { authToken: accessToken, refreshToken } = authResponse;
+      console.log({ refreshToken });
+      localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
+      setAuth({
+        accessToken,
+        username,
+        password,
+      });
+      setUsername("");
+      setPassword("");
+      navigate(from, { replace: true });
+    } catch (err) {
+      if (!err?.response) {
+        console.error("No Server Response");
+      } else if (err.response?.status === 400) {
+        console.error("Missing Username or Password");
+      } else if (err.response?.status === 401) {
+        console.error("Unauthorized");
+      } else {
+        console.error("Login Failed");
+      }
+    }
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
+    <GuestLayout>
+      <ThemeProvider theme={theme}>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
           <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
+            sx={{
+              marginTop: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
           >
-            <TextField
-              value={formData.username}
-              onChange={handleChange}
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
-              autoFocus
-            />
-            <TextField
-              value={formData.password}
-              onChange={handleChange}
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign in
+            </Typography>
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
+              sx={{ mt: 1 }}
             >
-              Sign In
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
+              <TextField
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                margin="normal"
+                required
+                fullWidth
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
+                autoFocus
+              />
+              <TextField
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+              />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign In
+              </Button>
+              <Grid container>
+                <Grid item xs>
+                  <Link href="#" variant="body2">
+                    Forgot password?
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link href="#" variant="body2">
+                    {"Don't have an account? Sign Up"}
+                  </Link>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
+            </Box>
           </Box>
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
-    </ThemeProvider>
+          <Copyright sx={{ mt: 8, mb: 4 }} />
+        </Container>
+      </ThemeProvider>
+    </GuestLayout>
   );
 }
