@@ -7,6 +7,7 @@ function useLocalStorageState(
 ) {
   const [state, setState] = React.useState(() => {
     const valueInLocalStorage = window.localStorage.getItem(key);
+    console.log({ valueInLocalStorage });
     if (valueInLocalStorage) {
       return deserialize(valueInLocalStorage);
     }
@@ -24,7 +25,13 @@ function useLocalStorageState(
     window.localStorage.setItem(key, serialize(state));
   }, [key, state, serialize]);
 
-  return [state, setState];
+  return [
+    state,
+    (s: any) => {
+      console.log({ s });
+      setState(s);
+    },
+  ];
 }
 
 export { useLocalStorageState };
