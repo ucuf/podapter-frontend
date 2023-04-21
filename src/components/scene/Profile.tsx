@@ -5,17 +5,7 @@ import { ThemeProvider } from "@emotion/react";
 import { Container, CssBaseline, createTheme } from "@mui/material";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate, useLocation } from "react-router-dom";
-
-interface Episode {
-  id: number;
-  title: string;
-  url: string;
-  length: number;
-  contentType?: string;
-  pubDate: string;
-  description?: string;
-  tags?: string[];
-}
+import { Episode } from "../../types/types";
 
 const theme = createTheme();
 export default function Profile() {
@@ -50,13 +40,24 @@ export default function Profile() {
     };
   }, [axiosPrivate, location, navigate]);
 
+  const handleDelete = async (episode: Episode) => {
+    try {
+      const res = await axiosPrivate.delete(`/api/v1/content/${episode.id}`);
+      setEpisodes((prevEpisodes) =>
+        prevEpisodes.filter((ep) => ep.id !== episode.id)
+      );
+    } catch (error) {
+      console.log({ error });
+    }
+  };
+
   return (
     <>
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <h1>User Profile</h1>
-          <EpisodesList episodes={episodes} />
+          <EpisodesList episodes={episodes} handleDelete={handleDelete} />
         </Container>
       </ThemeProvider>
     </>

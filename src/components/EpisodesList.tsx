@@ -1,4 +1,8 @@
 import * as React from "react";
+import { Button } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Episode } from "../types/types";
+import { useNavigate } from "react-router-dom";
 
 function timeAgo(dateStr: string) {
   const date: any = new Date(dateStr);
@@ -29,22 +33,13 @@ function lengthFormat(lengthInSeconds: number): string {
   return formattedLength;
 }
 
-interface Episode {
-  id: number;
-  title: string;
-  url: string;
-  length: number;
-  contentType?: string;
-  pubDate: string;
-  description?: string;
-  tags?: string[];
-}
-
 type Props = {
   episodes: Episode[];
+  handleDelete: (episode: Episode) => void;
 };
 
-export default function EpisodesList({ episodes }: Props) {
+export default function EpisodesList({ episodes, handleDelete }: Props) {
+  const navigate = useNavigate();
   return (
     <ol>
       {episodes.map((episode) => (
@@ -64,6 +59,21 @@ export default function EpisodesList({ episodes }: Props) {
             <source src={episode.url} type={episode.contentType} />
             Your browser does not support the audio element.
           </audio>
+          <Button
+            onClick={() => handleDelete(episode)}
+            variant="outlined"
+            startIcon={<DeleteIcon />}
+          >
+            Delete
+          </Button>
+          <Button
+            onClick={() =>
+              navigate(`/edit/${episode.id}`, { state: { episode } })
+            }
+            variant="outlined"
+          >
+            Edit
+          </Button>
         </li>
       ))}
     </ol>
