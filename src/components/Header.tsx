@@ -1,19 +1,16 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import HelpIcon from '@mui/icons-material/Help';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { Box, Menu, MenuItem } from '@mui/material';
 import { Link } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -34,6 +31,8 @@ export default function Header(props: HeaderProps) {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const {auth} = useAuth();
 
   return (
     <React.Fragment>
@@ -81,7 +80,7 @@ export default function Header(props: HeaderProps) {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt={auth.username} src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
             <Menu
