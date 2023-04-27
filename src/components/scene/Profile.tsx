@@ -6,6 +6,7 @@ import { Container, CssBaseline, createTheme } from "@mui/material";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Episode } from "../../types/types";
+import PageLayout from "../layout/PageLayout";
 
 const theme = createTheme();
 export default function Profile() {
@@ -52,14 +53,13 @@ export default function Profile() {
   };
 
   return (
-    <>
+    <PageLayout title={"Your Content"}>
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
-          <h1>User Profile</h1>
           <EpisodesList episodes={episodes} handleDelete={handleDelete} />
         </Container>
       </ThemeProvider>
-    </>
+    </PageLayout>
   );
 }

@@ -1,27 +1,23 @@
-import { Copyright } from "@mui/icons-material";
 import {
-  Autocomplete,
   Box,
   Button,
   Container,
   CssBaseline,
   Grid,
-  InputLabel,
   MenuItem,
   Select,
   TextField,
   ThemeProvider,
-  Typography,
   createTheme,
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Episode, EpisodeContentType } from "../types/types";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { Dayjs } from "dayjs";
+import PageLayout from "./layout/PageLayout";
 
 const theme = createTheme();
 export default function ContentForm() {
@@ -85,21 +81,19 @@ export default function ContentForm() {
   };
 
   return (
+              <PageLayout title={"Add New Content"}>
     <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Container component="main" maxWidth="xs">
+        {/* <Layout> */}
           <CssBaseline />
           <Box
             sx={{
-              marginTop: 8,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
             }}
           >
-            <Typography component="h1" variant="h5">
-              Add content
-            </Typography>
             <Box
               component="form"
               onSubmit={handleSubmit}
@@ -180,25 +174,6 @@ export default function ContentForm() {
                   />
                 </Grid>
               </Grid>
-              {/* <Autocomplete
-                multiple
-                limitTags={2}
-                id="multiple-limit-tags"
-                value={tags}
-                onChange={(e) => setTags([...tags, e.target.value])}
-                freeSolo
-                autoSelect
-                options={tags}
-                getOptionLabel={(option) => {
-                  console.log({ option });
-                  return option;
-                }}
-                defaultValue={[...tags]}
-                renderInput={(params) => (
-                  <TextField {...params} label="Tags" placeholder="Tags" />
-                )}
-                sx={{ width: "500px" }}
-              /> */}
               <Button
                 type="submit"
                 fullWidth
@@ -209,9 +184,9 @@ export default function ContentForm() {
               </Button>
             </Box>
           </Box>
-          <Copyright sx={{ mt: 8, mb: 4 }} />
         </Container>
       </LocalizationProvider>
     </ThemeProvider>
+              </PageLayout>
   );
 }

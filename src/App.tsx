@@ -4,52 +4,39 @@ import SignIn from "./components/SignIn";
 import Profile from "./components/scene/Profile";
 import { Link, Route, Routes } from "react-router-dom";
 import NotFound from "./components/scene/NotFound";
-import Layout from "./components/layout/Layout";
-import RequireAuth from "./components/RequireAuth";
+import AuthLayout from "./components/layout/AuthLayout";
 import ContentForm from "./components/ContentForm";
 import EditContentForm from "./components/EditContentForm";
 import Logout from "./components/Logout";
+import Paperbase from "./components/Paperbase";
+import Home from "./components/Home";
+import Hosting from "./components/Hosting";
+import Pricing from "./components/Pricing";
+import Settings from "./components/Settings";
+import About from "./components/About";
+
 
 function App() {
   return (
     <>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/signin">singin</Link>
-          </li>
-          <li>
-            <Link to="/signup">singup</Link>
-          </li>
-          <li>
-            <Link to="/profile">profile</Link>
-          </li>
-          <li>
-            <Link to="/add">add episode</Link>
-          </li>
-          <li>
-            <Link to="/notfound">notfound</Link>
-          </li>
-          <li>
-            <Link to="/logout">logout</Link>
-          </li>
-        </ul>
-      </nav>
       <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route path="signin" element={<SignIn />} />
-          <Route path="signup" element={<SignUp />} />
-          <Route path="logout" element={<Logout />} />
-          <Route element={<RequireAuth />}>
+        <Route path="/" element={<Paperbase />}>
+            <Route path="" element={<Home />} />
+          <Route element={<AuthLayout />}>
             <Route path="edit/:episodeId" element={<EditContentForm />} />
             <Route path="add" element={<ContentForm />} />
+            <Route path="hosting" element={<Hosting />} />
+            <Route path="pricing" element={<Pricing />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="about" element={<About />} />
             <Route path="profile" element={<Profile />} />
+            {/* <Route path="app" element={<Dashboard />} /> */}
+            <Route path="*" element={<NotFound />} />
           </Route>
-          <Route path="*" element={<NotFound />} />
         </Route>
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/logout" element={<Logout />} />
       </Routes>
     </>
   );
