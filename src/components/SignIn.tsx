@@ -18,6 +18,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useLocalStorageState } from "../hooks/useLocalStorageState";
+import useRefreshToken from "../hooks/useRefreshToken";
 
 function Copyright(props: any) {
   return (
@@ -45,7 +46,7 @@ type AuthResponse = {
 const theme = createTheme();
 export default function SignIn() {
   const { setAuth } = useAuth();
-  const [, setRefreshToken] = useLocalStorageState("refreshToken");
+  const refresh = useRefreshToken();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -53,6 +54,24 @@ export default function SignIn() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  React.useEffect(() => {
+    const relogin = async () => {
+      const newAccessToken = await refresh();
+      const response = await axios.get("/api/v1/user", {
+        headers: {
+          Authorization: `Bearer ${newAccessToken}`,
+        },
+      });
+      const { username } = response.data;
+      setAuth((prev) => {
+        return { ...prev, username };
+      });
+      navigate(from, { replace: true });
+    };
+
+    relogin();
+  }, [from, navigate, refresh, setAuth]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

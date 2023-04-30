@@ -14,17 +14,20 @@ import Hosting from "./components/Hosting";
 import Pricing from "./components/Pricing";
 import Settings from "./components/Settings";
 import About from "./components/About";
-
+import GeneratePodcast from "./components/scene/GeneratePodcast";
+import VideosToPodcast from "./components/scene/VideosToPodcast";
 
 function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<Paperbase />}>
-            <Route path="" element={<Home />} />
+          <Route path="" element={<Home />} />
           <Route element={<AuthLayout />}>
             <Route path="edit/:episodeId" element={<EditContentForm />} />
             <Route path="add" element={<ContentForm />} />
+            <Route path="generatePodcast" element={<GeneratePodcast />} />
+            <Route path="vidoesToPodcast" element={<VideosToPodcast />} />
             <Route path="hosting" element={<Hosting />} />
             <Route path="pricing" element={<Pricing />} />
             <Route path="settings" element={<Settings />} />

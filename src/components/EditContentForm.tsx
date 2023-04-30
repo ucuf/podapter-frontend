@@ -3,6 +3,7 @@ import {
   Autocomplete,
   Box,
   Button,
+  Chip,
   Container,
   CssBaseline,
   Grid,
@@ -46,7 +47,8 @@ export default function EditContentForm() {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(
     dayjs(existingEpisode?.pubDate ?? "")
   );
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>(existingEpisode.tags ?? []);
+  const [tagOptions, setTagOptions] = useState<string[]>(["tag2", "tag3"]);
 
   useEffect(() => {
     if (!location.state?.episode) {
@@ -63,12 +65,13 @@ export default function EditContentForm() {
       description,
       contentType: contentType !== "auto" ? contentType : undefined,
       pubDate: selectedDate?.toISOString(),
+      tags,
     };
 
     console.log(data);
     try {
       const response = await axiosPrivate.put(
-        `/api/v1/content/${episodeId}`,
+        `/content/${episodeId}`,
         JSON.stringify(data)
       );
 
@@ -191,6 +194,37 @@ export default function EditContentForm() {
                       setSelectedDate(e);
                       console.log({ e });
                     }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Autocomplete
+                    multiple
+                    id="tags-filled"
+                    options={tagOptions}
+                    value={[...tags]}
+                    // onChange={(e) => console.log(e)}
+                    onChange={(event, _tags) => {
+                      setTags(_tags);
+                    }}
+                    freeSolo
+                    renderTags={(value: readonly string[], getTagProps) =>
+                      value.map((option: string, index: number) => (
+                        <Chip
+                          key={option}
+                          variant="filled"
+                          label={option}
+                          {...getTagProps({ index })}
+                        />
+                      ))
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="outlined"
+                        label="Tags"
+                        placeholder="Favorites"
+                      />
+                    )}
                   />
                 </Grid>
               </Grid>

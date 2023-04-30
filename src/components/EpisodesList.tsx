@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button } from "@mui/material";
+import { Autocomplete, Button, Chip, TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Episode } from "../types/types";
 import { useNavigate } from "react-router-dom";
@@ -59,6 +59,27 @@ export default function EpisodesList({ episodes, handleDelete }: Props) {
             <source src={episode.url} type={episode.contentType} />
             Your browser does not support the audio element.
           </audio>
+          <Autocomplete
+            multiple
+            id="tags-filled"
+            options={[]}
+            defaultValue={episode.tags ?? []}
+            readOnly
+            size="small"
+            renderTags={(value: readonly string[], getTagProps) =>
+              value.map((option: string, index: number) => (
+                <Chip
+                  key={option}
+                  variant="filled"
+                  label={option}
+                  {...getTagProps({ index })}
+                />
+              ))
+            }
+            renderInput={(params) => (
+              <TextField {...params} variant="outlined" label="Episode tags" />
+            )}
+          />
           <Button
             onClick={() => handleDelete(episode)}
             variant="outlined"

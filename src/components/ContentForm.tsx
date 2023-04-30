@@ -1,6 +1,8 @@
 import {
+  Autocomplete,
   Box,
   Button,
+  Chip,
   Container,
   CssBaseline,
   Grid,
@@ -35,6 +37,7 @@ export default function ContentForm() {
   );
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [tags, setTags] = useState<string[]>([]);
+  const [tagOptions, setTagOptions] = useState<string[]>(["tag2", "tag3"]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -45,12 +48,13 @@ export default function ContentForm() {
       description,
       contentType: contentType !== "auto" ? contentType : undefined,
       pubDate: selectedDate?.toISOString(),
+      tags,
     };
 
     console.log(data);
     try {
       const response = await axiosPrivate.post(
-        "/api/v1/content",
+        "/content",
         JSON.stringify(data)
       );
 
@@ -81,112 +85,143 @@ export default function ContentForm() {
   };
 
   return (
-              <PageLayout title={"Add New Content"}>
-    <ThemeProvider theme={theme}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Container component="main" maxWidth="xs">
-        {/* <Layout> */}
-          <CssBaseline />
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
+    <PageLayout title={"Add New Content"}>
+      <ThemeProvider theme={theme}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Container component="main" maxWidth="xs">
+            {/* <Layout> */}
+            <CssBaseline />
             <Box
-              component="form"
-              onSubmit={handleSubmit}
-              noValidate
-              sx={{ mt: 1 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
             >
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="title"
-                    label="Title"
-                    name="title"
-                    autoComplete="title"
-                    autoFocus
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    value={url}
-                    onChange={(e) => setUrl(e.target.value)}
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="url"
-                    label="Url"
-                    type="url"
-                    id="url"
-                    autoComplete="url"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    margin="normal"
-                    fullWidth
-                    name="description"
-                    label="Description"
-                    type="description"
-                    id="description"
-                    autoComplete="description"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Select
-                    labelId="contentType"
-                    id="contentType"
-                    value={contentType}
-                    label="Content Type"
-                    autoWidth
-                    onChange={(e) =>
-                      setContentType(e.target.value as EpisodeContentType)
-                    }
-                  >
-                    <MenuItem value="auto" defaultChecked>
-                      Content Type
-                    </MenuItem>
-                    <MenuItem value="audio/mpeg">mpeg</MenuItem>
-                    <MenuItem value="audio/ogg">ogg</MenuItem>
-                    <MenuItem value="audio/wav">wav</MenuItem>
-                    <MenuItem value="audio/webm">webm</MenuItem>
-                    <MenuItem value="audio/aac">acc</MenuItem>
-                  </Select>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <DatePicker
-                    label="Select publish date"
-                    value={selectedDate}
-                    onChange={(e) => {
-                      setSelectedDate(e);
-                      console.log({ e });
-                    }}
-                  />
-                </Grid>
-              </Grid>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                noValidate
+                sx={{ mt: 1 }}
               >
-                Add
-              </Button>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="title"
+                      label="Title"
+                      name="title"
+                      autoComplete="title"
+                      autoFocus
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      value={url}
+                      onChange={(e) => setUrl(e.target.value)}
+                      margin="normal"
+                      required
+                      fullWidth
+                      name="url"
+                      label="Url"
+                      type="url"
+                      id="url"
+                      autoComplete="url"
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      margin="normal"
+                      fullWidth
+                      name="description"
+                      label="Description"
+                      type="description"
+                      id="description"
+                      autoComplete="description"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Select
+                      labelId="contentType"
+                      id="contentType"
+                      value={contentType}
+                      label="Content Type"
+                      autoWidth
+                      onChange={(e) =>
+                        setContentType(e.target.value as EpisodeContentType)
+                      }
+                    >
+                      <MenuItem value="auto" defaultChecked>
+                        Content Type
+                      </MenuItem>
+                      <MenuItem value="audio/mpeg">mpeg</MenuItem>
+                      <MenuItem value="audio/ogg">ogg</MenuItem>
+                      <MenuItem value="audio/wav">wav</MenuItem>
+                      <MenuItem value="audio/webm">webm</MenuItem>
+                      <MenuItem value="audio/aac">acc</MenuItem>
+                    </Select>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <DatePicker
+                      label="Select publish date"
+                      value={selectedDate}
+                      onChange={(e) => {
+                        setSelectedDate(e);
+                        console.log({ e });
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Autocomplete
+                      multiple
+                      id="tags-filled"
+                      options={tagOptions}
+                      value={[...tags]}
+                      // onChange={(e) => console.log(e)}
+                      onChange={(event, _tags) => {
+                        setTags(_tags);
+                      }}
+                      freeSolo
+                      renderTags={(value: readonly string[], getTagProps) =>
+                        value.map((option: string, index: number) => (
+                          <Chip
+                            key={option}
+                            variant="filled"
+                            label={option}
+                            {...getTagProps({ index })}
+                          />
+                        ))
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          label="Tags"
+                          placeholder="Favorites"
+                        />
+                      )}
+                    />
+                  </Grid>
+                </Grid>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Add
+                </Button>
+              </Box>
             </Box>
-          </Box>
-        </Container>
-      </LocalizationProvider>
-    </ThemeProvider>
-              </PageLayout>
+          </Container>
+        </LocalizationProvider>
+      </ThemeProvider>
+    </PageLayout>
   );
 }

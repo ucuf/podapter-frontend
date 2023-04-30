@@ -22,7 +22,7 @@ export default function Profile() {
 
     const getContents = async () => {
       try {
-        const res = await axiosPrivate.get("/api/v1/content", {
+        const res = await axiosPrivate.get("/content", {
           signal: controller.signal,
         });
         console.log(res.data);
@@ -30,7 +30,8 @@ export default function Profile() {
       } catch (error) {
         if (isMounted) {
           console.error(error);
-          navigate("/signin", { state: { from: location }, replace: true });
+          console.error("Failed fetching episodes", error);
+          // navigate("/signin", { state: { from: location }, replace: true });
         }
       }
     };
@@ -43,7 +44,7 @@ export default function Profile() {
 
   const handleDelete = async (episode: Episode) => {
     try {
-      const res = await axiosPrivate.delete(`/api/v1/content/${episode.id}`);
+      const res = await axiosPrivate.delete(`/content/${episode.id}`);
       setEpisodes((prevEpisodes) =>
         prevEpisodes.filter((ep) => ep.id !== episode.id)
       );
