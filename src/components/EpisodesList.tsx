@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Autocomplete, Button, Chip, TextField } from "@mui/material";
+import { Autocomplete, Box, Button, Chip, Grid, TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Episode } from "../types/types";
 import { useNavigate } from "react-router-dom";
@@ -41,9 +41,9 @@ type Props = {
 export default function EpisodesList({ episodes, handleDelete }: Props) {
   const navigate = useNavigate();
   return (
-    <ol>
+<Grid container spacing={1} m={0}>
       {episodes.map((episode) => (
-        <li key={episode.id}>
+        <Grid fontSize={"12px"} item xs={12} sm={6} md={4} key={episode.id}>
           <p title={new Date(episode.pubDate).toLocaleString()}>
             {timeAgo(episode.pubDate)}
           </p>
@@ -95,8 +95,8 @@ export default function EpisodesList({ episodes, handleDelete }: Props) {
           >
             Edit
           </Button>
-        </li>
+        </Grid>
       ))}
-    </ol>
+</Grid>
   );
 }

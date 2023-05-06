@@ -56,7 +56,7 @@ export default function Profile() {
   return (
     <PageLayout title={"Your Content"}>
       <ThemeProvider theme={theme}>
-        <Container component="main" maxWidth="xs">
+        <Container component="main">
           <CssBaseline />
           <EpisodesList episodes={episodes} handleDelete={handleDelete} />
         </Container>
