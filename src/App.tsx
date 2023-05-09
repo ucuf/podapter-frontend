@@ -16,6 +16,7 @@ import Settings from "./components/Settings";
 import About from "./components/About";
 import GeneratePodcast from "./components/scene/GeneratePodcast";
 import VideosToPodcast from "./components/scene/VideosToPodcast";
+import UserContent from "./components/scene/UserContent";
 
 function App() {
   return (
@@ -32,7 +33,7 @@ function App() {
             <Route path="pricing" element={<Pricing />} />
             <Route path="settings" element={<Settings />} />
             <Route path="about" element={<About />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="profile" element={<UserContent />} />
             {/* <Route path="app" element={<Dashboard />} /> */}
             <Route path="*" element={<NotFound />} />
           </Route>

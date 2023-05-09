@@ -126,19 +126,11 @@ export default function Navigator(props: DrawerProps) {
           icon: <Info />,
           active: location.pathname == "/about",
         },
-        {
-          id: "404",
-          href: "404",
-          icon: <BrokenImage />,
-          active: location.pathname == "/404",
-        },
       ],
     },
     {
       children: [
         { id: "Analytics", icon: <SettingsIcon /> },
-        { id: "Login", href: "/signin", icon: <Login /> },
-        { id: "Logout", href: "/logout", icon: <Logout /> },
       ],
     },
   ];

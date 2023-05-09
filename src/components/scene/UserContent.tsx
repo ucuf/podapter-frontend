@@ -28,7 +28,7 @@ import useAuth from "../../hooks/useAuth";
 import PodcastLinkDialog from "../PodcastLinkDialog";
 
 const theme = createTheme();
-export default function GeneratePodcast() {
+export default function UserContent() {
   const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
   // const navigate = useNavigate();
@@ -125,10 +125,10 @@ export default function GeneratePodcast() {
   };
 
   return (
-    <PageLayout title={"Generate a podcast"}>
+    <PageLayout title={"Your Content"}>
       <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Grid  container  spacing={2}>
+          <Grid   container  spacing={2}>
             <Grid height={"75vh"} overflow={"scroll"} item xs={12} md={4}>
               <Card sx={{ minWidth: 275 }}>
                 <CardContent>
@@ -219,6 +219,9 @@ export default function GeneratePodcast() {
                       label="Search"
                       type="search"
                     />
+                    {/* <Button variant="outlined" onClick={handleClickOpen}>
+                      Generate
+                    </Button> */}
                     <Button
                       variant="outlined"
                       type="reset"
@@ -233,18 +236,17 @@ export default function GeneratePodcast() {
                       Reset
                     </Button>
                   </Box>
-                  <PodcastLinkDialog
+                  {/* <PodcastLinkDialog
                     podcastLink={generatePodcastLink()}
                     handleClose={handleClose}
                     isOpen={open}
-                  />
+                  /> */}
                 </CardContent>
               </Card>
             </Grid>
             <Grid item xs={12} md={8} overflow={"scroll"} maxHeight={"75vh"}>
               <Card sx={{ minWidth: 275 }}>
                 <CardContent>
-                  <Box sx={{display:"flex", justifyContent: "space-between"}}>
                   <Typography
                     sx={{ fontSize: 34 }}
                     // color="text.secondary"
@@ -252,10 +254,6 @@ export default function GeneratePodcast() {
                   >
                     Episodes
                   </Typography>
-                    <Button size="small" sx={{height:40}} variant="outlined" onClick={handleClickOpen}>
-                      Generate
-                    </Button>
-                  </Box>
                   <EpisodesList
                     episodes={filterEpisodes(episodes)}
                     handleDelete={handleDelete}

@@ -23,6 +23,7 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Episode, EpisodeContentType } from "../types/types";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
+import PageLayout from "./layout/PageLayout";
 
 const theme = createTheme();
 export default function EditContentForm() {
@@ -102,21 +103,21 @@ export default function EditContentForm() {
   };
 
   return (
+      <PageLayout title={"Edit Content"}>
     <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box
             sx={{
-              marginTop: 8,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
             }}
           >
-            <Typography component="h1" variant="h5">
+            {/* <Typography component="h1" variant="h5">
               Edit content
-            </Typography>
+            </Typography> */}
             <Box
               component="form"
               onSubmit={handleSubmit}
@@ -257,9 +258,9 @@ export default function EditContentForm() {
               </Button>
             </Box>
           </Box>
-          <Copyright sx={{ mt: 8, mb: 4 }} />
         </Container>
       </LocalizationProvider>
     </ThemeProvider>
+      </PageLayout>
   );
 }
