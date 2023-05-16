@@ -5,7 +5,8 @@ interface AuthContextInterface {
   auth: {
     accessToken: string;
     username: string;
-    password: string;
+    email: string;
+    // password: string;
   };
   setAuth: React.Dispatch<React.SetStateAction<any>>;
 }
@@ -14,7 +15,8 @@ const AuthContext = createContext<AuthContextInterface>({
   auth: {
     accessToken: "",
     username: "",
-    password: "",
+    // password: "",
+    email: "",
   },
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   setAuth: () => {},
@@ -28,7 +30,8 @@ export const AuthProvider = ({ children }: Props) => {
   const [auth, setAuth] = useState({
     accessToken: "",
     username: "",
-    password: "",
+    // password: "",
+    email: "",
   });
 
   return (

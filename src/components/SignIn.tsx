@@ -11,6 +11,7 @@ import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
+import {Link as RouteLink} from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -73,9 +74,11 @@ export default function SignIn() {
           Authorization: `Bearer ${newAccessToken}`,
         },
       });
-      const { username } = response.data;
+      const { username, email } = response.data;
+      console.log("RESPONSE",response.data);
+      console.log("USERNAME",username,"EMAIL",email);
       setAuth((prev) => {
-        return { ...prev, username };
+        return { ...prev, username, email };
       });
       navigate(from, { replace: true });
     };
@@ -202,15 +205,17 @@ export default function SignIn() {
               Sign In
             </Button>
             <Grid container>
-              <Grid item xs>
+              {/* <Grid item xs>
                 <Link href="#" variant="body2">
                   Forgot password?
                 </Link>
-              </Grid>
+              </Grid> */}
               <Grid item>
-                <Link href="#" variant="body2">
+                <RouteLink to={"/signup"}>
+                <Link href="/signup" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
+                </RouteLink>
               </Grid>
             </Grid>
           </Box>

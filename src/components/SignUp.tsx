@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
+import {Link as RouteLink} from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -16,6 +17,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useLocalStorageState } from "../hooks/useLocalStorageState";
 import useAuth from "../hooks/useAuth";
 import axios from "../api/axios";
+import { Navigate, useNavigate } from "react-router-dom";
 
 interface FormData {
   firstname: string;
@@ -53,6 +55,7 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
 
   const { setAuth } = useAuth();
+  let navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -86,6 +89,7 @@ export default function SignUp() {
         username,
         password,
       });
+      navigate("/signin");
     } catch (error) {
       console.error(error);
     }
@@ -189,9 +193,11 @@ export default function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <RouteLink to="/signin">
+                <Link  variant="body2">
                   Already have an account? Sign in
                 </Link>
+                </RouteLink>
               </Grid>
             </Grid>
           </Box>
