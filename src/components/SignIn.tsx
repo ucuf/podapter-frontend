@@ -19,6 +19,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useLocalStorageState } from "../hooks/useLocalStorageState";
 import useRefreshToken from "../hooks/useRefreshToken";
+import { FormHelperText } from "@mui/material";
 
 function Copyright(props: any) {
   return (
@@ -43,6 +44,13 @@ type AuthResponse = {
   refreshToken: string;
 };
 
+type val = {
+  value: string;
+  error?: {
+    message: string;
+  };
+};
+
 const theme = createTheme();
 export default function SignIn() {
   const { setAuth } = useAuth();
@@ -52,8 +60,10 @@ export default function SignIn() {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/profile";
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState<val>({ value: "" });
+  const [password, setPassword] = useState<val>({ value: "" });
+
+  const [formError, setFormError] = useState("");
 
   React.useEffect(() => {
     const relogin = async () => {
@@ -75,13 +85,19 @@ export default function SignIn() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (username.value === "")
+      setUsername({ value: "", error: { message: "Username is required" } });
+    if (password.value === "")
+      setPassword({ value: "", error: { message: "Password is required" } });
+
     console.log({ username, password });
     try {
       const response = await axios.post(
         "/api/v1/auth/authenticate",
         JSON.stringify({
-          username,
-          password,
+          username: username.value,
+          password: password.value,
         }),
         {
           headers: { "Content-Type": "application/json" },
@@ -93,21 +109,25 @@ export default function SignIn() {
       localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
       setAuth({
         accessToken,
-        username,
-        password,
+        username: username.value,
+        password: password.value,
       });
-      setUsername("");
-      setPassword("");
+      setUsername({ value: "" });
+      setPassword({ value: "" });
       navigate(from, { replace: true });
     } catch (err) {
       if (!err?.response) {
         console.error("No Server Response");
+        setFormError("No Server Response");
       } else if (err.response?.status === 400) {
         console.error("Missing Username or Password");
+        setFormError("Missing Username or Password");
       } else if (err.response?.status === 401) {
         console.error("Unauthorized");
+        setFormError("Unauthorized");
       } else {
         console.error("Login Failed");
+        setFormError("Something went wrong");
       }
     }
   };
@@ -137,8 +157,10 @@ export default function SignIn() {
             sx={{ mt: 1 }}
           >
             <TextField
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              error={username.error}
+              helperText={username.error?.message}
+              value={username.value}
+              onChange={(e) => setUsername({ value: e.target.value })}
               margin="normal"
               required
               fullWidth
@@ -149,8 +171,10 @@ export default function SignIn() {
               autoFocus
             />
             <TextField
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              error={password.error}
+              helperText={password.error?.message}
+              value={password.value}
+              onChange={(e) => setPassword({ value: e.target.value })}
               margin="normal"
               required
               fullWidth
@@ -164,6 +188,11 @@ export default function SignIn() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
+            {formError && (
+              <FormHelperText error sx={{ textAlign: "center" }}>
+                {formError}
+              </FormHelperText>
+            )}
             <Button
               type="submit"
               fullWidth

@@ -5,6 +5,7 @@ import {
   Chip,
   Container,
   CssBaseline,
+  FormHelperText,
   Grid,
   MenuItem,
   Select,
@@ -21,6 +22,8 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { Dayjs } from "dayjs";
 import PageLayout from "./layout/PageLayout";
 
+type val = { value: string; error?: { message: string } };
+
 const theme = createTheme();
 export default function ContentForm() {
   const axiosPrivate = useAxiosPrivate();
@@ -29,23 +32,29 @@ export default function ContentForm() {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/profile";
 
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState<val>({ value: "" });
+  const [url, setUrl] = useState<val>({ value: "" });
+  const [description, setDescription] = useState<val>({ value: "" });
   const [contentType, setContentType] = useState<EpisodeContentType | "auto">(
     "auto"
   );
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [tagOptions, setTagOptions] = useState<string[]>(["tag2", "tag3"]);
+  const [formError, setFormError] = useState("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (title.value === "")
+      setTitle({ value: "", error: { message: "Title is required" } });
+    if (url.value === "")
+      setUrl({ value: "", error: { message: "URL is required" } });
+
     const data = {
-      title,
-      url,
-      description,
+      title: title.value,
+      url: url.value,
+      description: description.value,
       contentType: contentType !== "auto" ? contentType : undefined,
       pubDate: selectedDate?.toISOString(),
       tags,
@@ -61,13 +70,14 @@ export default function ContentForm() {
       const episode: Episode = response.data;
 
       console.log(episode);
-      setTitle("");
+      setTitle({ value: "", error: undefined });
       setUrl("");
       setDescription("");
       navigate(from, { replace: true });
     } catch (err) {
       if (!err?.response) {
         console.error("No Server Response");
+        setFormError("No server Response");
       } else if (err.response?.status === 400) {
         if (err.response?.data) {
           const { data } = err.response;
@@ -75,10 +85,13 @@ export default function ContentForm() {
           data.subErrors.forEach((subError) => {
             console.error(subError.message);
           });
+          setFormError("Invalid data");
         }
       } else if (err.response?.status === 401) {
+        setFormError("Unauthorized user");
         console.error("Unauthorized");
       } else {
+        setFormError("Something went wrong");
         console.error("Unknown error");
       }
     }
@@ -97,8 +110,12 @@ export default function ContentForm() {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                error={title.error}
+                helperText={title.error?.message}
+                value={title.value}
+                onChange={(e) =>
+                  setTitle({ value: e.target.value, error: undefined })
+                }
                 margin="normal"
                 required
                 fullWidth
@@ -111,8 +128,10 @@ export default function ContentForm() {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
+                error={url.error}
+                helperText={url.error?.message}
+                value={url.value}
+                onChange={(e) => setUrl({ value: e.target.value })}
                 margin="normal"
                 required
                 fullWidth
@@ -125,8 +144,8 @@ export default function ContentForm() {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={description.value}
+                onChange={(e) => setDescription({ value: e.target.value })}
                 margin="normal"
                 fullWidth
                 name="description"
@@ -199,6 +218,11 @@ export default function ContentForm() {
               />
             </Grid>
           </Grid>
+          {formError && (
+            <FormHelperText error sx={{ textAlign: "center" }}>
+              {formError}
+            </FormHelperText>
+          )}
           <Button
             type="submit"
             fullWidth
