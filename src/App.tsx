@@ -2,10 +2,9 @@ import * as React from "react";
 import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
 import Profile from "./components/scene/Profile";
-import { Link, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import NotFound from "./components/scene/NotFound";
 import AuthLayout from "./components/layout/AuthLayout";
-import ContentForm from "./components/ContentForm";
 import EditContentForm from "./components/EditContentForm";
 import Logout from "./components/Logout";
 import Paperbase from "./components/Paperbase";
@@ -17,6 +16,7 @@ import About from "./components/About";
 import GeneratePodcast from "./components/scene/GeneratePodcast";
 import VideosToPodcast from "./components/scene/VideosToPodcast";
 import UserContent from "./components/scene/UserContent";
+import AddContent from "./components/scene/AddContent";
 
 function App() {
   return (
@@ -26,7 +26,7 @@ function App() {
           <Route path="" element={<Home />} />
           <Route element={<AuthLayout />}>
             <Route path="edit/:episodeId" element={<EditContentForm />} />
-            <Route path="add" element={<ContentForm />} />
+            <Route path="add" element={<AddContent />} />
             <Route path="generatePodcast" element={<GeneratePodcast />} />
             <Route path="vidoesToPodcast" element={<VideosToPodcast />} />
             <Route path="hosting" element={<Hosting />} />
